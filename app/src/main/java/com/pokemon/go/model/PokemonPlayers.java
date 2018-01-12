@@ -15,6 +15,11 @@ public class PokemonPlayers {
     /**
      * bool whether one plays or not
      */
+
+    /**
+     * Id of the player
+     */
+    private String id;
     private boolean playsPokemonGo;
 
     public boolean isPlaysPokemonGo() {
@@ -31,5 +36,13 @@ public class PokemonPlayers {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

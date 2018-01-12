@@ -1,5 +1,6 @@
 package com.pokemon.go.activities;
 
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,11 +21,16 @@ public class MainActivity extends AppCompatActivity implements Dialog.DialogCall
     LinearLayoutManager linearLayoutManager;
     AdapterPokemon adapterPokemon;
     private DbHelper sqLiteDatabase;
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+    private boolean firstTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        sharedPreferences = this.getSharedPreferences("PREF", MODE_PRIVATE);
+        firstTime = sharedPreferences.getBoolean("1", false);
         recyclerView = findViewById(R.id.rv_pokemon);
         linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -32,9 +38,19 @@ public class MainActivity extends AppCompatActivity implements Dialog.DialogCall
         recyclerView.setAdapter(adapterPokemon);
 
         sqLiteDatabase = new DbHelper(this);
+        if (!firstTime) {
+            PokemonPlayers pokemonPlayers = new PokemonPlayers();
+            pokemonPlayers.setName("Rohit");
+            pokemonPlayers.setId("200");
+            sqLiteDatabase.insertPokePlayer(pokemonPlayers);
+        }
 
 
         adapterPokemon.addData(sqLiteDatabase.getPokePlayers());
+        editor = sharedPreferences.edit();
+
+        editor.putBoolean("1", true).apply();
+
     }
 
     @Override

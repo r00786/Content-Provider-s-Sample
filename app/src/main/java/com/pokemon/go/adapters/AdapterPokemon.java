@@ -29,7 +29,7 @@ public class AdapterPokemon extends RecyclerView.Adapter<AdapterPokemon.ViewHold
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(context).inflate(R.layout.layout_rv_pokemon_players, parent,false);
+        View v = LayoutInflater.from(context).inflate(R.layout.layout_rv_pokemon_players, parent, false);
         ViewHolder viewHolder = new ViewHolder(v);
         return viewHolder;
     }
@@ -43,8 +43,8 @@ public class AdapterPokemon extends RecyclerView.Adapter<AdapterPokemon.ViewHold
         } else {
             holder.tvStatus.setText("do not plays");
         }
-        holder.tvno.setText(String.valueOf(i));
-        i++;
+        holder.tvno.setText(pokemonPlayers.getId());
+
 
     }
 
@@ -54,7 +54,7 @@ public class AdapterPokemon extends RecyclerView.Adapter<AdapterPokemon.ViewHold
     }
 
     public void addData(List<PokemonPlayers> items) {
-        i=0;
+//        i=0;
         this.items = items;
         notifyDataSetChanged();
 

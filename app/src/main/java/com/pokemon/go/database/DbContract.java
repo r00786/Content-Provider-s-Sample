@@ -18,6 +18,8 @@ public class DbContract implements BaseColumns {
     //S no.
     public static final String ID = BaseColumns._ID;
 
+    public static final String PLAYER_ID = "plId";
+
     //Player Name
     public static final String PLAYER_NAME = "playername";
 
@@ -25,10 +27,11 @@ public class DbContract implements BaseColumns {
     public static final String STATUS = "status";
 
     //Defining projections for table
-    public static final String[] PROJECTIONS=new String[]{
+    public static final String[] PROJECTIONS = new String[]{
      /*this signifies column number*//*0*/DbContract.ID,
-            /*1*/DbContract.PLAYER_NAME,
-            /*2*/DbContract.STATUS
+           /*1*/ DbContract.PLAYER_ID,
+            /*2*/DbContract.PLAYER_NAME,
+            /*3*/DbContract.STATUS
     };
 
 

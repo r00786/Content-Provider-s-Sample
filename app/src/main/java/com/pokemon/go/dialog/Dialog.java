@@ -1,16 +1,19 @@
 package com.pokemon.go.dialog;
 
-import android.content.IntentFilter;
+import android.app.DialogFragment;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 import com.pokemon.go.R;
 import com.pokemon.go.model.PokemonPlayers;
@@ -19,14 +22,20 @@ import com.pokemon.go.model.PokemonPlayers;
  * Created by Lucifer on 11-01-2018.
  */
 
-public class Dialog extends DialogFragment {
+public class Dialog extends android.support.v4.app.DialogFragment {
     EditText etName;
-    EditText etIndex;
+    EditText etId;
     CheckBox status;
     Button btsb;
     private int query;
     private DialogCallbacks dialogCallbacks;
     private PokemonPlayers pokemonPlayers;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+    }
 
     public interface DialogCallbacks {
         void add(PokemonPlayers pokemonPlayers);
@@ -47,7 +56,7 @@ public class Dialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View viewRoot = inflater.inflate(R.layout.layout_dialog_main, container, false);
         etName = viewRoot.findViewById(R.id.et_content);
-        etIndex = viewRoot.findViewById(R.id.et_index);
+        etId = viewRoot.findViewById(R.id.et_id);
         status = viewRoot.findViewById(R.id.status);
         btsb = viewRoot.findViewById(R.id.bt_sb);
         if (getArguments() != null) {
@@ -61,18 +70,20 @@ public class Dialog extends DialogFragment {
                     if (dialogCallbacks != null) {
                         pokemonPlayers.setName(etName.getText().toString());
                         pokemonPlayers.setPlaysPokemonGo(status.isChecked());
+                        pokemonPlayers.setId(etId.getText().toString());
                         dialogCallbacks.add(pokemonPlayers);
                     }
                 } else if (query == 1) {
                     if (dialogCallbacks != null) {
-                        dialogCallbacks.delete(Integer.valueOf(etIndex.getText().toString()));
+                        dialogCallbacks.delete(Integer.valueOf(etId.getText().toString()));
                     }
 
                 } else if (query == 2) {
                     if (dialogCallbacks != null) {
                         pokemonPlayers.setName(etName.getText().toString());
                         pokemonPlayers.setPlaysPokemonGo(status.isChecked());
-                        dialogCallbacks.update(Integer.valueOf(etIndex.getText().toString()), pokemonPlayers);
+                        pokemonPlayers.setId(etId.getText().toString());
+                        dialogCallbacks.update(Integer.valueOf(etId.getText().toString()), pokemonPlayers);
                     }
                 }
                 dismiss();
@@ -83,9 +94,21 @@ public class Dialog extends DialogFragment {
         return viewRoot;
     }
 
-    @NonNull
     @Override
-    public android.app.Dialog onCreateDialog(Bundle savedInstanceState) {
-        return super.onCreateDialog(savedInstanceState);
+    public android.app.Dialog onCreateDialog(final Bundle savedInstanceState) {
+
+        // the content
+        final RelativeLayout root = new RelativeLayout(getActivity());
+        root.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        // creating the fullscreen dialog
+        final android.app.Dialog dialog = new android.app.Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(root);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        return dialog;
     }
+
 }

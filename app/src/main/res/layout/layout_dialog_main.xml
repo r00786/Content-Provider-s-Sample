@@ -5,11 +5,11 @@
     android:orientation="vertical">
 
     <EditText
-        android:id="@+id/et_index"
+        android:id="@+id/et_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:hint="index"
+        android:hint="id"
         android:inputType="number" />
 
     <EditText

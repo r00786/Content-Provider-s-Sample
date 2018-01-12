@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.pokemon.go.model.PokemonPlayers;
 
@@ -19,13 +20,14 @@ import java.util.List;
  */
 
 public class DbHelper extends SQLiteOpenHelper {
+    Context context;
     //Db version
     private static int DB_VERSION = 1;
     private static final String LOG_TAG = DbHelper.class.getSimpleName();
 
     //Sql statement to create a table
     private String CREATE_TABLE = "CREATE TABLE " + DbContract.TABLE_NAME + " (" + DbContract.ID +
-            " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + DbContract.PLAYER_NAME + " TEXT, " +
+            " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " + DbContract.PLAYER_ID + " TEXT, " + DbContract.PLAYER_NAME + " TEXT, " +
             DbContract.STATUS + " BOOLEAN" + " );";
 
     /**
@@ -35,6 +37,7 @@ public class DbHelper extends SQLiteOpenHelper {
      */
     public DbHelper(Context context) {
         super(context, DbContract.DB_NAME, null, DB_VERSION);
+        this.context = context;
 
     }
 
@@ -72,6 +75,7 @@ public class DbHelper extends SQLiteOpenHelper {
         //Creating content values to Add data
 
         ContentValues contentValues = new ContentValues();
+        contentValues.put(DbContract.PLAYER_ID, pokePlayer.getId());
         contentValues.put(DbContract.PLAYER_NAME, pokePlayer.getName());
         contentValues.put(DbContract.STATUS, pokePlayer.isPlaysPokemonGo());
         //Insert data to table
@@ -130,7 +134,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public PokemonPlayers cursorToAndroidVersion(Cursor cursor) {
 
         PokemonPlayers pokemonPlayers = new PokemonPlayers();
-
+        pokemonPlayers.setId(cursor.getString(cursor.getColumnIndex(DbContract.PLAYER_ID)));
         pokemonPlayers.setName(cursor.getString(cursor.getColumnIndex(DbContract.PLAYER_NAME)));
         pokemonPlayers.setPlaysPokemonGo(cursor.getInt(cursor.getColumnIndex(DbContract.STATUS)) > 0);
 
@@ -145,10 +149,13 @@ public class DbHelper extends SQLiteOpenHelper {
     public void deleteFromDb(int dbIndex) {
 
         SQLiteDatabase db = this.getWritableDatabase();
+
         try {
-            db.execSQL("DELETE FROM " + DbContract.TABLE_NAME + " WHERE " + DbContract.ID + "='" + dbIndex + "'");
+            db.execSQL("DELETE FROM " + DbContract.TABLE_NAME + " WHERE " + DbContract.PLAYER_ID + "='" + dbIndex + "'");
         } catch (RuntimeException ignored) {
             //Silent Catch
+            Toast.makeText(context, "some error", Toast.LENGTH_SHORT).show();
+
         }
         db.close();
 
@@ -165,10 +172,14 @@ public class DbHelper extends SQLiteOpenHelper {
         ContentValues data = new ContentValues();
         data.put(DbContract.PLAYER_NAME, pokemonPlayers.getName());
         data.put(DbContract.STATUS, pokemonPlayers.isPlaysPokemonGo());
+        String selection = DbContract.PLAYER_ID + " LIKE ?";
+        String[] selectionArgs = {String.valueOf(dbIndex)};
         try {
-            sqLiteDatabase.update(DbContract.TABLE_NAME, data, DbContract.ID + " = " + dbIndex, null);
+            int i = sqLiteDatabase.update(DbContract.TABLE_NAME, data, selection, selectionArgs);
+            Toast.makeText(context, "" + i, Toast.LENGTH_LONG).show();
         } catch (RuntimeException ignored) {
             //Silent catch
+            Toast.makeText(context, ignored.getMessage(), Toast.LENGTH_LONG).show();
         }
 
         sqLiteDatabase.close();
